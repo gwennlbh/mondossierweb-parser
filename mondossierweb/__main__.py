@@ -23,6 +23,7 @@ from selenium import webdriver
 import selenium.common.exceptions
 import sys
 import os
+from gotify import Gotify
 
 HEADLESS = True
 
@@ -53,8 +54,9 @@ def configure():
     grade_code = cli_arg_or("GRADE_CODE", "Grade code (e.g. N7I51 for SN 1A): ")
     save_as = Path(cli_arg_or("SAVE_AS", "Save JSON file as: "))
     url = cli_arg_or("URL", "URL de mondossierweb: ")
-    pushbullet_link = cli_arg_or("PUSHBULLET_LINK", "Pushbullet link: ")
-    return username, password_command, grade_code, save_as, url, pushbullet_link
+    gotify_base_url = cli_arg_or("GOTIFY_URL", "Gotify_base_url: ")
+    gotify_app_token = cli_arg_or("GOTIFY_APP_TOKEN", "Gotify App Token: ")
+    return username, password_command, grade_code, save_as, url, gotify_base_url, gotify_app_token
 
 
 def get_password(password_command):
@@ -195,7 +197,7 @@ def diff_with_previous(new_grades, save_as):
 
 
 def main():
-    username, password_command, grade_code, save_as, url, pushbullet_link = configure()
+    username, password_command, grade_code, save_as, url, gotify_base_url, gotify_app_token = configure()
     print("Getting HTML")
     document = get_html(username, password_command, grade_code, url)
     print("Parsing HTML table into dict")
@@ -206,7 +208,15 @@ def main():
     save_as.write_text(json.dumps({"updated_at": str(datetime.now())} | grades, indent=4))
 
     if changes:
-        run(["pb", "push", "--link", pushbullet_link, "--title", "Nouvelles notes", '\n'.join(f"{label}: {grade['grade']}" for label, grade in changes.items())])
+        gotify = Gotify(
+            base_url = gotify_base_url,
+            app_token = gotify_app_token,
+        )
+        gotify.create_message(
+            title = "Nouvelles notes",
+            message = '\n'.join(f"{label}: {grade['grade']}" for label, grade in changes.items()),
+            priority = 5,
+        )
 
     sys.exit(1 if changes else 0)
 

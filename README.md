@@ -36,8 +36,8 @@ GRADE_CODE=N7I51
 USERNAME= <Your username>
 PASSWORD_COMMAND=echo '<Your password>'
 MDW_USE_CACHE=1
-PUSHBULLET_KEY=<Your pushbullet token>
-PUSHBULLET_LINK=<The link of the notif (you can leave this one empty)> 
+GOTIFY_URL="<Your gotify instance url>"
+GOTIFY_APP_TOKEN="<The gotify app token created for the parser>"
 ```
 
 ## Known `GRADE_CODE`s
