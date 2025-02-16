@@ -17,7 +17,7 @@ gotify = "^0.6.0"
 requests = "2.32.*"
 
 [tool.poetry.scripts]
-mondossierweb = "mondossierweb.main:main"
+mondossierweb = "mondossierweb.__main__:main"
 
 
 [build-system]
