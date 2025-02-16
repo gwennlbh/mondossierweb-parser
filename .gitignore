@@ -177,3 +177,6 @@ poetry.toml
 mdw.html
 mdw-cells.json
 grades.json
+
+# nix build
+result
