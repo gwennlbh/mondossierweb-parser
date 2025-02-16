@@ -1,7 +1,8 @@
 services:
   mondossierweb:
+    init: true # Absolutely needed for cron to set its PID to 1 so it can start in foreground
     build:
       context: .
     volumes:
-      - ./grades.json:/grades.json
+      - ./grades.json:/app/grades.json
     env_file: .env

@@ -16,7 +16,11 @@ RUN --mount=type=cache,target=$POETRY_CACHE_DIR poetry install --no-root
 
 FROM python:3.11-alpine as runtime
 
+# Install dcron
+RUN apk add --no-cache bash curl dcron
 
+# Add cron job
+RUN echo "*/5 * * * * cd /app && python -m mondossierweb >> /var/log/cron.log 2>&1" > /etc/crontabs/root
 
 # Installing geckodriver
 # Get all the prereqs
@@ -41,6 +45,7 @@ ENV VIRTUAL_ENV=/app/.venv \
 
 COPY --from=builder ${VIRTUAL_ENV} ${VIRTUAL_ENV}
 
-COPY mondossierweb ./mondossierweb
+COPY mondossierweb /app/mondossierweb
 
-ENTRYPOINT ["python", "-m", "mondossierweb"]
+# Start cron service and stream the log to the console
+ENTRYPOINT ["crond", "-f"]
