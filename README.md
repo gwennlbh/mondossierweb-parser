@@ -49,4 +49,6 @@ GOTIFY_APP_TOKEN="<The gotify app token created for the parser>"
 | ENSEEIHT | 3A   | 3EA        | `N7I43`      |
 | ENSEEIHT | 1A   | SN         | `N7I51`      |
 | ENSEEIHT | 2A   | SN         | `N7I52`      |
+| ENSEEIHT | 3A   | SN         | `N7I53`      |
+| ENSEEIHT | 3A   | PSMSC      | `N7X062`     |
 
