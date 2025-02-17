@@ -65,7 +65,7 @@ def configure():
     gotify_base_url = cli_arg_optional("GOTIFY_URL")
     gotify_app_token = cli_arg_optional("GOTIFY_APP_TOKEN")
     ntfy_url = cli_arg_optional("NTFY_URL")
-    hide_grade = cli_arg_or("HIDE_GRADE", "Hide grades? (1/0): ")
+    hide_grade = cli_arg_or("HIDE_GRADES", "Hide grades? (1/0): ")
     return username, password_command, grade_code, save_as, url, gotify_base_url, gotify_app_token, hide_grade, ntfy_url
 
 
@@ -96,7 +96,7 @@ def get_html(username, password_command, grade_code, url):
     display.start()
     print(f"\tOpening {url}…")
     profile = FirefoxProfile()
-    profile.set_preference('general.useragent.override', "Ceci est un script d'automatisation inoffensif réalisé par un élève de l'n7. Contact: mondossierweb@ewen.works; Code source: https://github.com/ewen-lbh/mondossierweb-parser")
+    profile.set_preference('general.useragent.override', "Ceci est un script d'automatisation inoffensif réalisé par un élève de l'n7. Contact: mondossierweb@gwenn°.works; Code source: https://github.com/gwenn°-lbh/mondossierweb-parser")
     driver = start_firefox(url, headless=False, profile=profile)
     print("\tTyping username")
     write(username, into="Username")

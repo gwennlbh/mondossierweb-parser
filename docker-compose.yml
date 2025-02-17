@@ -1,8 +1,9 @@
 services:
   mondossierweb:
-    profiles:
-      - '' # Make the profile run without the flag --profile (not putting this line would make it run at all times (even with --profile cron))
-    init: true # Absolutely needed for cron to set its PID to 1 so it can start in foreground
+    # Make the profile run without the flag --profile (not putting this line would make it run at all times (even with --profile cron))
+    profiles: ['']
+     # Needed for cron to set its PID to 1 so it can start in foreground
+    init: true
     build:
       context: .
     volumes:
@@ -12,9 +13,9 @@ services:
       resources:
         limits:
           memory: 1024M # Just in case of a memory leak
-    entrypoint: ["python", "-m", "mondossierweb"]
+    entrypoint: [python, -m, mondossierweb]
   mondossierweb-cron:
-    profiles: ["cron"]
+    profiles: [cron]
     init: true
     build:
       context: .
@@ -25,5 +26,6 @@ services:
       resources:
         limits:
           memory: 1024M
-    entrypoint: ["/bin/sh", "-c", "echo \"$CRON_SCHEDULE cd /app && python -m mondossierweb\" > /etc/crontabs/root && crond -f"] # The cron job (scheduling is done here because it can't be parsed within the Dockerfile)
+    # The cron job (scheduling is done here because it can't be parsed within the Dockerfile)
+    entrypoint: [/bin/sh, -c, echo "$CRON_SCHEDULE cd /app && python -m mondossierweb" > /etc/crontabs/root && crond -f]
 
