@@ -38,7 +38,24 @@ PASSWORD_COMMAND=echo '<Your password>'
 MDW_USE_CACHE=1
 GOTIFY_URL="<Your gotify instance url>"
 GOTIFY_APP_TOKEN="<The gotify app token created for the parser>"
+CRON_SCHEDULE="*/5 * * * *"
+HIDE_GRADES=1
+NTFY_URL=https://ntfy.sh/mytopic
 ```
+
+## Hiding grades
+
+If you want to hide grades, you can set the `HIDE_GRADES` environment variable to `1`. This will hide the grades in the notification.
+
+## Running with cron
+
+Running with cron is easy, just run the following command:
+
+```sh
+    docker-compose --profile=cron up -d
+```
+
+The CRON_SCHEDULE is a cron schedule, you can use [crontab.guru](https://crontab.guru/) to help you.
 
 ## Known `GRADE_CODE`s
 

@@ -65,7 +65,8 @@ def configure():
     gotify_base_url = cli_arg_optional("GOTIFY_URL")
     gotify_app_token = cli_arg_optional("GOTIFY_APP_TOKEN")
     ntfy_url = cli_arg_optional("NTFY_URL")
-    return username, password_command, grade_code, save_as, url, gotify_base_url, gotify_app_token, ntfy_url
+    hide_grade = cli_arg_or("HIDE_GRADE", "Hide grades? (1/0): ")
+    return username, password_command, grade_code, save_as, url, gotify_base_url, gotify_app_token, hide_grade, ntfy_url
 
 
 def get_password(password_command):
@@ -139,6 +140,7 @@ def get_html(username, password_command, grade_code, url):
     parsed = BeautifulSoup(html, features="lxml")
     kill_browser()
     display.stop()
+    driver.quit()
     return parsed
 
 
@@ -206,7 +208,7 @@ def diff_with_previous(new_grades, save_as):
 
 
 def main():
-    username, password_command, grade_code, save_as, url, gotify_base_url, gotify_app_token, ntfy_url = configure()
+    username, password_command, grade_code, save_as, url, gotify_base_url, gotify_app_token, hide_grade, ntfy_url = configure()
     if not gotify_base_url or not gotify_app_token:
         print("Missing GOTIFY_URL or GOTIFY_APP_TOKEN, gotify will be disabled")
         use_gotify = False
@@ -237,13 +239,13 @@ def main():
             )
             gotify.create_message(
                 title = "Nouvelles notes",
-                message = '\n'.join(f"{label}: {grade['grade']}" for label, grade in changes.items()),
+                message = '\n'.join(f"{label}: {grade['grade']}" if not hide_grade else f"{label}" for label, grade in changes.items()),
                 priority = 5,
             )
         if use_ntfy:
             assert ntfy_url is not None # remove warning from LSP
             requests.post(ntfy_url,
-                          data='\n'.join(f"{label}: {grade['grade']}" for label, grade in changes.items()),
+                          data='\n'.join(f"{label}: {grade['grade']}" if not hide_grade else f"{label}" for label, grade in changes.items()),
                           headers={
                               "Title": "New grades",
                               "Tags": "school,scroll"
