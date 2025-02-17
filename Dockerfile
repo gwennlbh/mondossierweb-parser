@@ -34,7 +34,6 @@ RUN wget https://github.com/mozilla/geckodriver/releases/download/v0.34.0/geckod
     rm geckodriver-v0.34.0-linux64.tar.gz &&\
     chmod +x geckodriver &&\
     mv geckodriver /usr/bin/ 
-    
 
 ENV VIRTUAL_ENV=/app/.venv \
     PATH="/app/.venv/bin:$PATH"
@@ -43,6 +42,12 @@ COPY --from=builder ${VIRTUAL_ENV} ${VIRTUAL_ENV}
 
 COPY mondossierweb /app/mondossierweb
 
+# Apply nix/fix_helium_firefox_profile.patch in venv
+RUN apk add --no-cache patch
+
+COPY ./nix/fix_helium_firefox_profile.patch /app/nix/fix_helium_firefox_profile.patch
+RUN cd /app/.venv/lib/python3.11/site-packages/ && patch -p1 < /app/nix/fix_helium_firefox_profile.patch
+    
 WORKDIR /app
 
 # Entrypoint is now profile dependant and will be set by the docker-compose file
