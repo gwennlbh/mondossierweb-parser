@@ -9,14 +9,15 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.10"
 docopt = "^0.6.2"
-bs4 = "^0.0.1"
-helium = "^3.0.9"
-lxml = "4.9.3"
+beautifulsoup4 = "4.12.*"
+helium = "5.1.*"
+lxml = "5.3.*"
 pyvirtualdisplay = "^3.0"
 gotify = "^0.6.0"
+requests = "2.32.*"
 
 [tool.poetry.scripts]
-mondossierweb = "mondossierweb.main:main"
+mondossierweb = "mondossierweb.__main__:main"
 
 
 [build-system]

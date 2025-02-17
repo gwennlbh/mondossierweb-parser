@@ -24,6 +24,7 @@ import selenium.common.exceptions
 import sys
 import os
 from gotify import Gotify
+import requests
 
 HEADLESS = True
 
@@ -49,14 +50,22 @@ def configure():
             return arg
         return input(ask_message)
 
+    def cli_arg_optional(key):
+        if (arg := opts.get(key)) is not None:
+            return arg
+        elif (arg := os.getenv(key)) is not None and arg != "":
+            return arg
+        return None
+
     username = cli_arg_or("USERNAME", "Username: ")
     password_command = cli_arg_or("PASSWORD_COMMAND", "Command to get password: ")
     grade_code = cli_arg_or("GRADE_CODE", "Grade code (e.g. N7I51 for SN 1A): ")
     save_as = Path(cli_arg_or("SAVE_AS", "Save JSON file as: "))
     url = cli_arg_or("URL", "URL de mondossierweb: ")
-    gotify_base_url = cli_arg_or("GOTIFY_URL", "Gotify_base_url: ")
-    gotify_app_token = cli_arg_or("GOTIFY_APP_TOKEN", "Gotify App Token: ")
-    return username, password_command, grade_code, save_as, url, gotify_base_url, gotify_app_token
+    gotify_base_url = cli_arg_optional("GOTIFY_URL")
+    gotify_app_token = cli_arg_optional("GOTIFY_APP_TOKEN")
+    ntfy_url = cli_arg_optional("NTFY_URL")
+    return username, password_command, grade_code, save_as, url, gotify_base_url, gotify_app_token, ntfy_url
 
 
 def get_password(password_command):
@@ -198,7 +207,18 @@ def diff_with_previous(new_grades, save_as):
 
 
 def main():
-    username, password_command, grade_code, save_as, url, gotify_base_url, gotify_app_token = configure()
+    username, password_command, grade_code, save_as, url, gotify_base_url, gotify_app_token, ntfy_url = configure()
+    if not gotify_base_url or not gotify_app_token:
+        print("Missing GOTIFY_URL or GOTIFY_APP_TOKEN, gotify will be disabled")
+        use_gotify = False
+    else:
+        use_gotify = True
+    if not ntfy_url:
+        print("Missing NTFY_URL, ntfy will be disabled")
+        use_ntfy = False
+    else:
+        use_ntfy = True
+
     print("Getting HTML")
     document = get_html(username, password_command, grade_code, url)
     print("Parsing HTML table into dict")
@@ -209,15 +229,26 @@ def main():
     save_as.write_text(json.dumps({"updated_at": str(datetime.now())} | grades, indent=4))
 
     if changes:
-        gotify = Gotify(
-            base_url = gotify_base_url,
-            app_token = gotify_app_token,
-        )
-        gotify.create_message(
-            title = "Nouvelles notes",
-            message = '\n'.join(f"{label}: {grade['grade']}" for label, grade in changes.items()),
-            priority = 5,
-        )
+        if use_gotify:
+            assert gotify_base_url is not None # remove warning from LSP
+            assert gotify_app_token is not None
+            gotify = Gotify(
+                base_url = gotify_base_url,
+                app_token = gotify_app_token,
+            )
+            gotify.create_message(
+                title = "Nouvelles notes",
+                message = '\n'.join(f"{label}: {grade['grade']}" for label, grade in changes.items()),
+                priority = 5,
+            )
+        if use_ntfy:
+            assert ntfy_url is not None # remove warning from LSP
+            requests.post(ntfy_url,
+                          data='\n'.join(f"{label}: {grade['grade']}" for label, grade in changes.items()),
+                          headers={
+                              "Title": "New grades",
+                              "Tags": "school,scroll"
+                              })
 
     sys.exit(1 if changes else 0)
 
