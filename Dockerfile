@@ -19,16 +19,12 @@ FROM python:3.11-alpine as runtime
 # Install dcron
 RUN apk add --no-cache bash curl dcron
 
-# Add cron job
-RUN echo "*/5 * * * * cd /app && python -m mondossierweb" > /etc/crontabs/root
-
 # Installing geckodriver
 # Get all the prereqs
 RUN wget -q -O /etc/apk/keys/sgerrand.rsa.pub https://alpine-pkgs.sgerrand.com/sgerrand.rsa.pub &&\
     wget https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.35-r1/glibc-2.35-r1.apk &&\
-    apk add glibc-2.35-r1.apk
-    # wget https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.35-r1/glibc-bin-2.35-r1.apk &&\
-    # apk add glibc-bin-2.35-r1.apk
+    apk add glibc-2.35-r1.apk &&\
+    rm glibc-2.35-r1.apk
 
 # And of course we need Firefox if we actually want to *use* GeckoDriver
 RUN apk add firefox xvfb
@@ -47,5 +43,6 @@ COPY --from=builder ${VIRTUAL_ENV} ${VIRTUAL_ENV}
 
 COPY mondossierweb /app/mondossierweb
 
-# Start cron service and stream the log to the console
-ENTRYPOINT ["crond", "-f"]
+WORKDIR /app
+
+# Entrypoint is now profile dependant and will be set by the docker-compose file

@@ -130,6 +130,7 @@ def get_html(username, password_command, grade_code, url):
     parsed = BeautifulSoup(html, features="lxml")
     kill_browser()
     display.stop()
+    driver.quit()
     return parsed
 
 
