@@ -29,9 +29,9 @@ RUN wget -q -O /etc/apk/keys/sgerrand.rsa.pub https://alpine-pkgs.sgerrand.com/s
 # And of course we need Firefox if we actually want to *use* GeckoDriver
 RUN apk add firefox xvfb
 # Then install GeckoDriver
-RUN wget https://github.com/mozilla/geckodriver/releases/download/v0.34.0/geckodriver-v0.34.0-linux64.tar.gz &&\
-    tar -xvzf geckodriver-v0.34.0-linux64.tar.gz &&\
-    rm geckodriver-v0.34.0-linux64.tar.gz &&\
+RUN wget https://github.com/mozilla/geckodriver/releases/download/v0.35.0/geckodriver-v0.35.0-linux64.tar.gz &&\
+    tar -xvzf geckodriver-v0.35.0-linux64.tar.gz &&\
+    rm geckodriver-v0.35.0-linux64.tar.gz &&\
     chmod +x geckodriver &&\
     mv geckodriver /usr/bin/ 
 

@@ -94,53 +94,57 @@ def get_html(username, password_command, grade_code, url):
 
     display = Display(visible=int(not HEADLESS), size=(1920, 1080))
     display.start()
-    print(f"\tOpening {url}…")
-    profile = FirefoxProfile()
-    profile.set_preference('general.useragent.override', "Ceci est un script d'automatisation inoffensif réalisé par un élève de l'n7. Contact: mondossierweb@gwenn°.works; Code source: https://github.com/gwenn°-lbh/mondossierweb-parser")
-    driver = start_firefox(url, headless=False, profile=profile)
-    print("\tTyping username")
-    write(username, into="Username")
-    print("\tTyping password")
-    write(get_password(password_command), into="Password")
-    print("\tLogging in…")
-    scroll_down(500)
-    click("Login")
     try:
-        if "Invalid credentials" in S("body").web_element.text:
-            print("\t\tInvalid credentials, exiting.")
-            kill_browser()
-            sys.exit(2)
-    except selenium.common.exceptions.StaleElementReferenceException:
-        pass
+        print(f"\tOpening {url}…")
+        profile = FirefoxProfile()
+        profile.set_preference('general.useragent.override', "Ceci est un script d'automatisation inoffensif réalisé par un élève de l'n7. Contact: mondossierweb@ewen.works; Code source: https://github.com/ewen-lbh/mondossierweb-parser")
+        driver = start_firefox(url, headless=False, profile=profile)
+        print("\tTyping username")
+        write(username, into="Username")
+        print("\tTyping password")
+        write(get_password(password_command), into="Password")
+        print("\tLogging in…")
+        scroll_down(500)
+        click("Login")
+        try:
+            if "Invalid credentials" in S("body").web_element.text:
+                print("\t\tInvalid credentials, exiting.")
+                kill_browser()
+                display.stop()
+                driver.quit()
+                sys.exit(2)
+        except selenium.common.exceptions.StaleElementReferenceException:
+            pass
 
-    print("\tWaiting for page to load…")
-    sleep(3)
-    try:
-        print("\tClosing reminder")
-        click("Fermer")
-    except:
-        pass
-    print("\tNavigating to grades page")
-    click("Notes & résultats")
-    print("\tOpening grades table")
-    click(grade_code)
-    try:
-        print("\tClosing annoying reminder")
-        click("Fermer")
-    except:
-        pass
-    element = driver.find_element(By.XPATH, "//div[@class='v-scrollable']//div[@class='v-scrollable v-table-body-wrapper v-table-body']")
-    driver.execute_script("arguments[0].scrollBy(0,1000)", element)
-    sleep(1)
-    print("\tCapturing page body")
-    html = S("body").web_element.get_attribute("innerHTML")
-    if os.getenv("MDW_USE_CACHE"):
-        print("\tCaching HTML to mdw.html") 
-        Path("mdw.html").write_text(html)
-    parsed = BeautifulSoup(html, features="lxml")
-    kill_browser()
-    display.stop()
-    driver.quit()
+        print("\tWaiting for page to load…")
+        sleep(3)
+        try:
+            print("\tClosing reminder")
+            click("Fermer")
+        except:
+            pass
+        print("\tNavigating to grades page")
+        click("Notes & résultats")
+        print("\tOpening grades table")
+        click(grade_code)
+        try:
+            print("\tClosing annoying reminder")
+            click("Fermer")
+        except:
+            pass
+        element = driver.find_element(By.XPATH, "//div[@class='v-scrollable']//div[@class='v-scrollable v-table-body-wrapper v-table-body']")
+        driver.execute_script("arguments[0].scrollBy(0,1000)", element)
+        sleep(1)
+        print("\tCapturing page body")
+        html = S("body").web_element.get_attribute("innerHTML")
+        if os.getenv("MDW_USE_CACHE"):
+            print("\tCaching HTML to mdw.html") 
+            Path("mdw.html").write_text(html)
+        parsed = BeautifulSoup(html, features="lxml")
+    finally:
+        kill_browser()
+        display.stop()
+        driver.quit()
     return parsed
 
 
