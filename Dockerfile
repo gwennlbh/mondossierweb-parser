@@ -1,4 +1,4 @@
-FROM python:3.11-alpine as builder
+FROM python:3.13-alpine as builder
 
 RUN pip install poetry
 
@@ -14,7 +14,7 @@ RUN touch README.md
 
 RUN --mount=type=cache,target=$POETRY_CACHE_DIR poetry install --no-root
 
-FROM python:3.11-alpine as runtime
+FROM python:3.13-alpine as runtime
 
 # Install dcron
 RUN apk add --no-cache bash curl dcron
