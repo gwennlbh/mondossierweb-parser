@@ -97,7 +97,7 @@ def get_html(username, password_command, grade_code, url):
     try:
         print(f"\tOpening {url}…")
         profile = FirefoxProfile()
-        profile.set_preference('general.useragent.override', "Ceci est un script d'automatisation inoffensif réalisé par un élève de l'n7. Contact: mondossierweb@ewen.works; Code source: https://github.com/ewen-lbh/mondossierweb-parser")
+        profile.set_preference('general.useragent.override', "Ceci est un script d'automatisation inoffensif réalisé par des étudiant·e·s de l'n7. Code source: https://github.com/gwennlbh/mondossierweb-parser")
         driver = start_firefox(url, headless=False, profile=profile)
         print("\tTyping username")
         write(username, into="Username")
