@@ -9,7 +9,7 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.10"
 docopt = "^0.6.2"
-beautifulsoup4 = "4.12.*"
+beautifulsoup4 = "4.13.*"
 helium = "5.1.*"
 lxml = "5.4.*"
 pyvirtualdisplay = "^3.0"
